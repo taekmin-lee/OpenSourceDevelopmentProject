@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_home">
+
+    <fragment
+        android:id="@+id/navigation_home"
+        android:name="com.viewpoints.aischeduler.ui.home.HomeFragment"
+        android:label="@string/title_home"
+        tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/navigation_calendar"
+        android:name="com.viewpoints.aischeduler.ui.calendar.CalendarFragment"
+        android:label="@string/title_calendar"
+        tools:layout="@layout/fragment_calendar">
+        <action
+            android:id="@+id/action_to_schedule_form"
+            app:destination="@id/navigation_schedule_form"
+            app:exitAnim="@null"/>
+        <action
+            android:id="@+id/action_to_schedule_details"
+            app:destination="@id/navigation_schedule_details"
+            app:exitAnim="@null"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_explore"
+        android:name="com.viewpoints.aischeduler.ui.notifications.NotificationsFragment"
+        android:label="@string/title_explore"
+        tools:layout="@layout/fragment_notifications" />
+
+    <fragment
+        android:id="@+id/navigation_schedule_form"
+        android:name="com.viewpoints.aischeduler.ui.calendar.ScheduleFormFragment"
+        tools:layout="@layout/fragment_schedule_form">
+        <action
+            android:id="@+id/action_to_place_dialog"
+            app:destination="@id/navigation_place_dialog"
+            app:exitAnim="@null"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_schedule_details"
+        android:name="com.viewpoints.aischeduler.ui.schedule.ScheduleDetailsFragment"
+        tools:layout="@layout/fragment_schedule_details" />
+
+    <fragment
+        android:id="@+id/navigation_place_dialog"
+        android:name="com.viewpoints.aischeduler.ui.calendar.PlaceDialogFragment"
+        tools:layout="@layout/fragment_place_dialog" />
+
+
+</navigation>
