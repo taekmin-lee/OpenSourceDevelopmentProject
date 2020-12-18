@@ -17,6 +17,7 @@ import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.viewpoints.aischeduler.R;
+import com.viewpoints.aischeduler.data.model.Schedule;
 
 public class ScheduleDetailsFragment extends Fragment {
 
@@ -25,7 +26,7 @@ public class ScheduleDetailsFragment extends Fragment {
     protected TabPagerAdapter adapter;
     protected ViewPager2 viewPager;
 
-    protected int scheduleId;
+    protected Schedule schedule;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -35,14 +36,14 @@ public class ScheduleDetailsFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Bundle bundle = getArguments();
-        scheduleId = bundle.getInt("id");
+        schedule = (Schedule)getArguments().getSerializable("schedule");
 
         View view = inflater.inflate(R.layout.fragment_schedule_details, container, false);
 
         toolbar = view.findViewById(R.id.toolbar);
+        toolbar.setTitle(schedule.getName() + " 일정 상세 정보");
 
-        adapter = new TabPagerAdapter(this, scheduleId);
+        adapter = new TabPagerAdapter(this, schedule);
 
         viewPager = view.findViewById(R.id.view_pager);
         viewPager.setAdapter(adapter);
@@ -72,15 +73,15 @@ public class ScheduleDetailsFragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.edit_menu:
                 Bundle bundle = new Bundle();
-                bundle.putInt("id", scheduleId);
+                bundle.putSerializable("schedule", schedule);
 
-                Navigation.findNavController(this.getView()).navigate(R.id.navigation_schedule_form, bundle);
+                Navigation.findNavController(getView()).navigate(R.id.navigation_schedule_form, bundle);
                 break;
             case R.id.delete_menu:
 
                 break;
             default:
-                return super.onOptionsItemSelected(item);
+                getActivity().onBackPressed();
         }
 
         return true;

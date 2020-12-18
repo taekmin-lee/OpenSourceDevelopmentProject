@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,7 +17,8 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.chip.Chip;
@@ -27,8 +29,10 @@ import com.google.android.material.timepicker.MaterialTimePicker;
 import com.google.android.material.timepicker.TimeFormat;
 import com.viewpoints.aischeduler.R;
 import com.viewpoints.aischeduler.data.AppDatabase;
+import com.viewpoints.aischeduler.data.model.PlaceType;
 import com.viewpoints.aischeduler.data.model.Schedule;
 import com.viewpoints.aischeduler.data.model.VehicleType;
+import com.viewpoints.aischeduler.data.openapi.kakao.PlaceSearchResult;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -46,14 +50,17 @@ public class ScheduleFormFragment extends Fragment {
     protected SwitchMaterial allDaySwitch;
     protected ConstraintLayout endLayout;
     protected TextView startDateText, startTimeText, endDateText, endTimeText, placeText;
+    protected ImageButton removePlaceButton;
     protected Chip carChip, transitChip;
 
-    protected Integer id = null;
+    protected Schedule schedule;
     protected LocalDate startDate, endDate;
     protected LocalTime startTime, endTime;
 
     protected String placeName;
-    protected double longitude, latitude;
+    protected Integer placeId;
+    protected PlaceType placeType;
+    protected Double placeLongitude, placeLatitude;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -65,7 +72,6 @@ public class ScheduleFormFragment extends Fragment {
     @Override
     @SuppressWarnings("deprecation")
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         View view = inflater.inflate(R.layout.fragment_schedule_form, container, false);
 
         toolbar = view.findViewById(R.id.toolbar);
@@ -124,8 +130,38 @@ public class ScheduleFormFragment extends Fragment {
             });
         });
 
+        getParentFragmentManager().setFragmentResultListener("placeSearch", this, (requestKey, bundle) -> {
+            PlaceSearchResult place = (PlaceSearchResult) bundle.getSerializable("place");
+
+            placeName = place.getName();
+            placeId = place.getId();
+            placeType = PlaceType.get(place.getCategoryCode());
+            placeLongitude = place.getLongitude();
+            placeLatitude = place.getLatitude();
+
+            placeText.setText(place.getName());
+            placeText.setTextColor(0xFF000000);
+            removePlaceButton.setVisibility(View.VISIBLE);
+        });
+
         placeText = view.findViewById(R.id.place_text);
-        placeText.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.navigation_place_dialog));
+        placeText.setOnClickListener(v ->
+        {
+            NavController controller = NavHostFragment.findNavController(this);
+            controller.navigate(R.id.navigation_place_dialog);
+        });
+
+        removePlaceButton = view.findViewById(R.id.remove_place_button);
+        removePlaceButton.setOnClickListener(v -> {
+            placeName = null;
+            placeId = null;
+            placeType = null;
+            placeLongitude = placeLatitude = null;
+
+            placeText.setText("장소");
+            placeText.setTextColor(0x99000000);
+            removePlaceButton.setVisibility(View.GONE);
+        });
 
         carChip = view.findViewById(R.id.car_chip);
         transitChip = view.findViewById(R.id.transit_chip);
@@ -156,8 +192,8 @@ public class ScheduleFormFragment extends Fragment {
     @RequiresApi(api = Build.VERSION_CODES.O)
     protected void loadData(Bundle bundle) {
         if (bundle != null) {
-            if (bundle.containsKey("id")) {
-                Schedule schedule = AppDatabase.getInstance(getActivity()).scheduleDao().get(bundle.getInt("id"));
+            if (bundle.containsKey("schedule")) {
+                Schedule schedule = (Schedule) bundle.getSerializable("schedule");
 
                 nameText.setText(schedule.getName());
                 allDaySwitch.setChecked(schedule.isAllDay());
@@ -169,6 +205,21 @@ public class ScheduleFormFragment extends Fragment {
                 startTime = schedule.getStart().toLocalTime();
                 endDate = schedule.getEnd().toLocalDate();
                 endTime = schedule.getEnd().toLocalTime();
+
+                placeId = schedule.getPlaceId();
+
+                if (placeId != null) {
+                    placeName = schedule.getPlaceName();
+                    placeType = schedule.getPlaceType();
+                    placeLongitude = schedule.getPlaceLongitude();
+                    placeLatitude = schedule.getPlaceLatitude();
+
+                    placeText.setText(placeName);
+                    placeText.setTextColor(0xFF000000);
+                    removePlaceButton.setVisibility(View.VISIBLE);
+                }
+
+                toolbar.setTitle("일정 수정");
             } else if (bundle.containsKey("date")) {
                 startDate = (LocalDate) bundle.getSerializable("date");
 
@@ -179,6 +230,8 @@ public class ScheduleFormFragment extends Fragment {
 
                 endDate = temp.toLocalDate();
                 endTime = temp.toLocalTime();
+
+                toolbar.setTitle("일정 추가");
             }
 
             updateDate(startDate, startDateText);
@@ -205,8 +258,15 @@ public class ScheduleFormFragment extends Fragment {
             schedule.setName(nameText.getText().toString());
             schedule.setStart(startDate.atTime(startTime));
             schedule.setEnd(endDate.atTime(endTime));
-            schedule.setVehicleType(carChip.isChecked() ? VehicleType.CAR : VehicleType.TRANSIT);
             schedule.setAllDay(allDaySwitch.isChecked());
+
+            schedule.setPlaceName(placeName);
+            schedule.setPlaceId(placeId);
+            schedule.setPlaceType(placeType);
+            schedule.setPlaceLongitude(placeLongitude);
+            schedule.setPlaceLatitude(placeLatitude);
+
+            schedule.setVehicleType(carChip.isChecked() ? VehicleType.CAR : VehicleType.TRANSIT);
             schedule.setMemo(memoText.getText().toString());
 
             database.scheduleDao().insert(schedule);

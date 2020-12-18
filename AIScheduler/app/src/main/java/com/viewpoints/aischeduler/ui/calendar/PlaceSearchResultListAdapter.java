@@ -11,7 +11,7 @@ import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.viewpoints.aischeduler.R;
-import com.viewpoints.aischeduler.data.openapi.kakao.KeywordSearchResult;
+import com.viewpoints.aischeduler.data.openapi.kakao.PlaceSearchResult;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -19,17 +19,16 @@ import java.util.List;
 
 public class PlaceSearchResultListAdapter extends RecyclerView.Adapter<PlaceSearchResultListAdapter.ViewHolder> {
 
-    public interface OnItemClickListener {
-        void onLocationButtonClick(View view, KeywordSearchResult item);
-
-        void onSelectButtonClick(View view, KeywordSearchResult item);
+    public interface OnClickListener {
+        void onLocationButtonClick(View view, PlaceSearchResult item);
+        void onSelectButtonClick(View view, PlaceSearchResult item);
     }
 
-    protected List<KeywordSearchResult> items;
-    protected OnItemClickListener listener = null;
+    protected List<PlaceSearchResult> items;
+    protected OnClickListener listener = null;
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        protected final TextView nameText, categoryText, addressText;
+        protected final TextView nameText, categoryText, addressText, distanceText;
         protected final Button locationButton, selectButton;
 
         public ViewHolder(View view) {
@@ -37,6 +36,7 @@ public class PlaceSearchResultListAdapter extends RecyclerView.Adapter<PlaceSear
             nameText = view.findViewById(R.id.name_text);
             categoryText = view.findViewById(R.id.category_text);
             addressText = view.findViewById(R.id.address_text);
+            distanceText = view.findViewById(R.id.distance_text);
 
             locationButton = view.findViewById(R.id.location_button);
             selectButton = view.findViewById(R.id.select_button);
@@ -46,18 +46,19 @@ public class PlaceSearchResultListAdapter extends RecyclerView.Adapter<PlaceSear
         }
 
         @RequiresApi(api = Build.VERSION_CODES.O)
-        public void bind(KeywordSearchResult item) {
+        public void bind(PlaceSearchResult item) {
             nameText.setText(item.getName());
-            categoryText.setText(item.getCategory());
+            categoryText.setText(item.getCategoryText());
             addressText.setText(item.getAddress());
+            distanceText.setText(String.format("%.1f㎞", item.getDistance() / 1000.0));
         }
     }
 
-    public PlaceSearchResultListAdapter(List<KeywordSearchResult> items) {
+    public PlaceSearchResultListAdapter(List<PlaceSearchResult> items) {
         this.items = items;
     }
 
-    public void setOnItemClickListener(OnItemClickListener listener) {
+    public void setOnClickListener(OnClickListener listener) {
         this.listener = listener;
     }
 

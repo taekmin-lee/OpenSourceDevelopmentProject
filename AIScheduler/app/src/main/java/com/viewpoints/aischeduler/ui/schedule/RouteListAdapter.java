@@ -20,8 +20,14 @@ import org.jetbrains.annotations.NotNull;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
-public class DirectionsListAdapter extends RecyclerView.Adapter<DirectionsListAdapter.ViewHolder> {
+public class RouteListAdapter extends RecyclerView.Adapter<RouteListAdapter.ViewHolder> {
+
+    public interface OnClickListener {
+        void onItemClick(View view, DirectionsRoute item);
+    }
+
     protected DirectionsRoute[] items;
+    protected RouteListAdapter.OnClickListener listener = null;
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         protected final TextView optimalText, durationText, timeText, busLineText, busStopText, destinationStopText;
@@ -36,6 +42,7 @@ public class DirectionsListAdapter extends RecyclerView.Adapter<DirectionsListAd
             busStopText = view.findViewById(R.id.bus_stop_text);
             destinationStopText = view.findViewById(R.id.destination_stop_text);
 
+            view.setOnClickListener(v -> listener.onItemClick(v, items[getAdapterPosition()]));
         }
 
         @RequiresApi(api = Build.VERSION_CODES.O)
@@ -65,20 +72,24 @@ public class DirectionsListAdapter extends RecyclerView.Adapter<DirectionsListAd
         }
     }
 
-    public DirectionsListAdapter(DirectionsRoute[] items) {
+    public RouteListAdapter(DirectionsRoute[] items) {
         this.items = items;
+    }
+
+    public void setOnClickListener(RouteListAdapter.OnClickListener listener) {
+        this.listener = listener;
     }
 
     @NotNull
     @Override
-    public DirectionsListAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.directions_summary_item, viewGroup, false);
-        return new DirectionsListAdapter.ViewHolder(view);
+    public RouteListAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.route_item, viewGroup, false);
+        return new RouteListAdapter.ViewHolder(view);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
-    public void onBindViewHolder(DirectionsListAdapter.ViewHolder viewHolder, final int position) {
+    public void onBindViewHolder(RouteListAdapter.ViewHolder viewHolder, final int position) {
         viewHolder.bind(items[position]);
     }
 

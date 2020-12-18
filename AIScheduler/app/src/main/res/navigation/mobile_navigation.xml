@@ -52,5 +52,9 @@
         android:name="com.viewpoints.aischeduler.ui.calendar.PlaceDialogFragment"
         tools:layout="@layout/fragment_place_dialog" />
 
+    <fragment
+        android:id="@+id/navigation_route_details"
+        android:name="com.viewpoints.aischeduler.ui.schedule.RouteDetailsFragment"
+        tools:layout="@layout/fragment_route_details" />
 
 </navigation>

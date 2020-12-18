@@ -4,6 +4,7 @@ import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
@@ -29,11 +30,13 @@ public class ScheduleListAdapter extends RecyclerView.Adapter<ScheduleListAdapte
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         protected final TextView nameText, timeText, locationText;
+        protected ImageView locationIcon;
 
         public ViewHolder(View view) {
             super(view);
             nameText = view.findViewById(R.id.name_text);
             timeText = view.findViewById(R.id.time_text);
+            locationIcon = view.findViewById(R.id.location_icon);
             locationText = view.findViewById(R.id.location_text);
 
             view.setOnClickListener(v -> listener.onScheduleClick(v, items.get(getAdapterPosition())));
@@ -50,7 +53,11 @@ public class ScheduleListAdapter extends RecyclerView.Adapter<ScheduleListAdapte
                 timeText.setText(item.getStart().format(formatter) + " ~ " + item.getEnd().format(formatter));
             }
 
-            locationText.setText("Test Location");
+            if (item.getPlaceId() != null) {
+                locationIcon.setVisibility(View.VISIBLE);
+                locationText.setText(item.getPlaceName());
+                locationText.setVisibility(View.VISIBLE);
+            }
         }
     }
 

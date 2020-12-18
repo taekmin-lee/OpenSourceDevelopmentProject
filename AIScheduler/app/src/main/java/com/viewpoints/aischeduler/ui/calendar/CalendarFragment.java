@@ -10,6 +10,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,7 +28,6 @@ import com.viewpoints.aischeduler.data.AppDatabase;
 import com.viewpoints.aischeduler.data.model.Schedule;
 
 import java.time.LocalDate;
-import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,7 +42,11 @@ public class CalendarFragment extends Fragment {
     protected RecyclerView recyclerView;
     protected ScheduleListAdapter scheduleListAdapter;
 
-    protected FloatingActionButton addButton;
+    protected TextView dateText;
+
+    protected FloatingActionButton createButton;
+
+    protected LiveData<List<Schedule>> schedules;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -53,15 +57,13 @@ public class CalendarFragment extends Fragment {
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        ArrayList<Schedule> test = new ArrayList<Schedule>();
-
         View view = inflater.inflate(R.layout.fragment_calendar, container, false);
 
         AppDatabase database = AppDatabase.getInstance(getActivity());
-        LiveData<List<Schedule>> data = database.scheduleDao().getAll();
-        data.observe(getViewLifecycleOwner(), this::filterSchedules);
+        schedules = database.scheduleDao().getAll();
+        schedules.observe(getViewLifecycleOwner(), this::filterSchedules);
 
-        calendarView = view.findViewById(R.id.calendarView);
+        calendarView = view.findViewById(R.id.calendar_view);
         calendarView.setOnCalendarSelectListener(new CalendarView.OnCalendarSelectListener() {
             @Override
             public void onCalendarOutOfRange(Calendar calendar) {
@@ -69,24 +71,29 @@ public class CalendarFragment extends Fragment {
 
             @Override
             public void onCalendarSelect(Calendar calendar, boolean isClick) {
-                toolbar.setTitle(calendar.getYear() + "년 " + calendar.getMonth() + "월");
+                toolbar.setTitle(String.format("%d년 %d월", calendar.getYear(), calendar.getMonth()));
+                dateText.setText(String.format("%d년 %d월 %d일", calendar.getYear(), calendar.getMonth(), calendar.getDay()));
+
+                filterSchedules(schedules.getValue());
             }
         });
 
         toolbar = view.findViewById(R.id.toolbar);
         toolbar.setTitle(calendarView.getCurYear() + "년 " + calendarView.getCurMonth() + "월");
 
-        recyclerView = view.findViewById(R.id.scheduleList);
+        recyclerView = view.findViewById(R.id.recycler_view);
 
-        addButton = view.findViewById(R.id.addButton);
-        addButton.setOnClickListener(v -> {
+        dateText = view.findViewById(R.id.date_text);
+
+        createButton = view.findViewById(R.id.create_button);
+        createButton.setOnClickListener(v -> {
             Bundle bundle = new Bundle();
             bundle.putSerializable("date", LocalDate.of(calendarView.getSelectedCalendar().getYear(), calendarView.getSelectedCalendar().getMonth(), calendarView.getSelectedCalendar().getDay()));
 
             Navigation.findNavController(v).navigate(R.id.navigation_schedule_form, bundle);
         });
 
-        filterSchedules(data.getValue());
+        filterSchedules(schedules.getValue());
 
         AppCompatActivity activity = (AppCompatActivity) getActivity();
 
@@ -103,26 +110,25 @@ public class CalendarFragment extends Fragment {
             Map<String, Calendar> monthly = new HashMap<>();
             List<Schedule> daily = new ArrayList<>();
 
-            int year = calendarView.getCurYear();
-            int month = calendarView.getCurMonth();
-            YearMonth yearMonth = YearMonth.of(year, month);
-            int day = calendarView.getCurDay();
+            int year = calendarView.getSelectedCalendar().getYear();
+            int month = calendarView.getSelectedCalendar().getMonth();
+            int day = calendarView.getSelectedCalendar().getDay();
+
+            Log.d("test", day +"일 일정");
 
             for (Schedule schedule : schedules) {
-                if (YearMonth.from(schedule.getStart()).equals(yearMonth) || YearMonth.from(schedule.getEnd()).equals(yearMonth)) {
-                    for (LocalDate d = schedule.getStart().toLocalDate(); d.compareTo(schedule.getEnd().toLocalDate()) <= 0; d = d.plusDays(1)) {
-                        if (YearMonth.from(d).equals(yearMonth)) {
-                            Calendar calendar = new Calendar();
-                            calendar.setYear(year);
-                            calendar.setMonth(month);
-                            calendar.setDay(d.getDayOfMonth());
-                            calendar.setSchemeColor(Color.BLUE);
+                for (LocalDate d = schedule.getStart().toLocalDate(); d.compareTo(schedule.getEnd().toLocalDate()) <= 0; d = d.plusDays(1)) {
+                    if (d.getYear() == year && d.getMonthValue() == month) {
+                        Calendar calendar = new Calendar();
+                        calendar.setYear(year);
+                        calendar.setMonth(month);
+                        calendar.setDay(d.getDayOfMonth());
+                        calendar.setSchemeColor(Color.BLUE);
 
-                            monthly.put(calendar.toString(), calendar);
+                        monthly.put(calendar.toString(), calendar);
 
-                            if (d.getDayOfMonth() == day) {
-                                daily.add(schedule);
-                            }
+                        if (d.getDayOfMonth() == day) {
+                            daily.add(schedule);
                         }
                     }
                 }
@@ -133,9 +139,7 @@ public class CalendarFragment extends Fragment {
             scheduleListAdapter = new ScheduleListAdapter(daily);
             scheduleListAdapter.setOnClickListener((view, item) -> {
                 Bundle bundle = new Bundle();
-                bundle.putInt("id", item.getId());
-
-                Log.d("calendard", "selected id is " + item.getId());
+                bundle.putSerializable("schedule", item);
 
                 Navigation.findNavController(view).navigate(R.id.navigation_schedule_details, bundle);
             });

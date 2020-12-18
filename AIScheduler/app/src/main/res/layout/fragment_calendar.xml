@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context=".ui.calendar.CalendarFragment">
 
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
@@ -20,54 +21,99 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <com.haibin.calendarview.CalendarLayout
-        android:id="@+id/calendarLayout"
+    <com.haibin.calendarview.CalendarView
+        android:id="@+id/calendar_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#fff">
+        android:background="#fff"
+        app:calendar_height="46dp"
+        app:calendar_padding="10dp"
+        app:current_month_lunar_text_color="#CFCFCF"
+        app:current_month_text_color="#333333"
+        app:layout_constraintTop_toBottomOf="@id/app_bar"
+        app:lunar_text_size="0sp"
+        app:min_year="1970"
+        app:month_view="com.viewpoints.aischeduler.ui.calendar.SimpleMonthView"
+        app:other_month_text_color="#e1e1e1"
+        app:scheme_text_color="#333"
+        app:scheme_theme_color="#333"
+        app:selected_text_color="#fff"
+        app:selected_theme_color="#333"
+        app:week_background="#fff"
+        app:week_text_color="#111"
+        app:week_view="com.viewpoints.aischeduler.ui.calendar.SimpleWeekView"
+        app:year_view_day_text_color="#333333"
+        app:year_view_day_text_size="9sp"
+        app:year_view_month_text_color="#ff0000"
+        app:year_view_month_text_size="20sp"
+        app:year_view_scheme_color="#f17706" />
 
-        <com.haibin.calendarview.CalendarView
-            android:id="@+id/calendarView"
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:cardElevation="2dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/calendar_view">
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#fff"
-            app:calendar_height="46dp"
-            app:calendar_padding="10dp"
-            app:current_month_lunar_text_color="#CFCFCF"
-            app:current_month_text_color="#333333"
-            app:lunar_text_size="0sp"
-            app:min_year="1970"
-            app:month_view="com.viewpoints.aischeduler.ui.calendar.SimpleMonthView"
-            app:other_month_text_color="#e1e1e1"
-            app:scheme_text_color="#333"
-            app:scheme_theme_color="#333"
-            app:selected_text_color="#fff"
-            app:selected_theme_color="#333"
-            app:week_background="#fff"
-            app:week_text_color="#111"
-            app:week_view="com.viewpoints.aischeduler.ui.calendar.SimpleWeekView"
-            app:year_view_day_text_color="#333333"
-            app:year_view_day_text_size="9sp"
-            app:year_view_month_text_color="#ff0000"
-            app:year_view_month_text_size="20sp"
-            app:year_view_scheme_color="#f17706" />
+            android:orientation="vertical">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="16dp">
-
-            <com.google.android.material.card.MaterialCardView
+            <View
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:elevation="2dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                android:layout_height="1dp"
+                android:background="#1F000000" />
 
-                <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/scheduleList"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginVertical="12dp">
+
+                <TextView
+                    android:id="@+id/date_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="2020년 12월 17일"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/sky_image"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
+                    android:src="@drawable/db01"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/temp_text"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/temp_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:text="1℃"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#1F000000" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:scrollbars="vertical"
@@ -75,20 +121,19 @@
                 app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
                 tools:listitem="@layout/schedule_item" />
 
-            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
 
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/addButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:srcCompat="@drawable/ic_round_add"
-                tools:ignore="VectorDrawableCompat" />
+    </com.google.android.material.card.MaterialCardView>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/create_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:contentDescription="@string/create_schedule"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/ic_round_add"
+        tools:ignore="VectorDrawableCompat" />
 
-    </com.haibin.calendarview.CalendarLayout>
-
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

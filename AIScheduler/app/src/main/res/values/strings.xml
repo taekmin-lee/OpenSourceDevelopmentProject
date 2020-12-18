@@ -19,4 +19,17 @@
     <string name="delete">삭제</string>
     <string name="destination">목적지</string>
     <string name="origin">출발지</string>
+    <string name="immediate_schedules">가까운 일정</string>
+    <string name="current_weather">현재 날씨</string>
+    <string name="create_schedule">일정 추가</string>
+    <string name="route_details">경로 상세 정보</string>
+    <string name="restaurant">음식점</string>
+    <string name="hotel">숙박</string>
+    <string name="tour">관광지</string>
+    <string name="cafe">카페</string>
+    <string name="parking">주차장</string>
+    <string name="gas_station">주유소</string>
+    <string name="pharmacy">약국</string>
+    <string name="hospital">병원</string>
+    <string name="bank">은행</string>
 </resources>

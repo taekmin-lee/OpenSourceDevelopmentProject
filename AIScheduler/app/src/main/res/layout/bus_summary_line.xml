@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="8dp"
-        android:textAppearance="?attr/textAppearanceCaption"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
         android:textStyle="bold" />
 
     <TextView
@@ -29,6 +29,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="12dp"
-        android:textAppearance="?attr/textAppearanceCaption" />
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption" />
 
 </LinearLayout>

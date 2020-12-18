@@ -1,5 +1,6 @@
 package com.viewpoints.aischeduler.ui.calendar;
 
+import android.location.Location;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -13,22 +14,30 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.Response;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.naver.maps.geometry.LatLng;
+import com.naver.maps.geometry.LatLngBounds;
 import com.naver.maps.map.CameraAnimation;
+import com.naver.maps.map.CameraPosition;
 import com.naver.maps.map.CameraUpdate;
 import com.naver.maps.map.MapFragment;
 import com.naver.maps.map.NaverMap;
 import com.naver.maps.map.overlay.Marker;
 import com.viewpoints.aischeduler.R;
+import com.viewpoints.aischeduler.data.UserLocationContext;
 import com.viewpoints.aischeduler.data.openapi.OpenApiContext;
 import com.viewpoints.aischeduler.data.openapi.kakao.KeywordSearchApiRequest;
-import com.viewpoints.aischeduler.data.openapi.kakao.KeywordSearchResult;
+import com.viewpoints.aischeduler.data.openapi.kakao.PlaceSearchResult;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class PlaceDialogFragment extends Fragment {
+
+    public interface OnClickListener {
+        void addOnPositiveButtonClickListener(PlaceSearchResult result);
+    }
 
     protected MaterialToolbar toolbar;
 
@@ -52,7 +61,7 @@ public class PlaceDialogFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_place_dialog, container, false);
 
-        FragmentManager manager = getActivity().getSupportFragmentManager();
+        FragmentManager manager = getChildFragmentManager();
         MapFragment mapFragment = (MapFragment) manager.findFragmentById(R.id.map);
 
         if (mapFragment == null) {
@@ -60,7 +69,13 @@ public class PlaceDialogFragment extends Fragment {
             manager.beginTransaction().add(R.id.map, mapFragment).commit();
         }
 
-        mapFragment.getMapAsync(m -> map = m);
+        mapFragment.getMapAsync(map ->
+        {
+            this.map = map;
+
+            Location location = UserLocationContext.getInstance(getActivity()).getLocation();
+            map.setCameraPosition(new CameraPosition(new LatLng(location.getLatitude(), location.getLongitude()), 14));
+        });
 
         toolbar = view.findViewById(R.id.toolbar);
 
@@ -70,33 +85,47 @@ public class PlaceDialogFragment extends Fragment {
 
         searchButton.setOnClickListener(v -> {
             OpenApiContext.getInstance(view.getContext()).getRequestQueue().add(new KeywordSearchApiRequest(searchText.getText().toString(),
-                    r -> {
+                    UserLocationContext.getInstance(getActivity()).getLocation(),
+                    (Response.Listener<List<PlaceSearchResult>>) response -> {
                         for (Marker marker : markers) {
                             marker.setMap(null);
                         }
 
                         markers.clear();
 
-                        adapter = new PlaceSearchResultListAdapter(r);
+                        adapter = new PlaceSearchResultListAdapter(response);
 
-                        for (KeywordSearchResult result : r) {
+                        List<LatLng> coords = new ArrayList<>();
+
+                        for (PlaceSearchResult item : response) {
                             Marker marker = new Marker();
-                            marker.setPosition(new LatLng(result.getLatitude(), result.getLongitude()));
-                            marker.setCaptionText(result.getName());
+                            LatLng coord = new LatLng(item.getLatitude(), item.getLongitude());
+                            marker.setPosition(coord);
+                            marker.setCaptionText(item.getName());
+
                             marker.setMap(map);
 
                             markers.add(marker);
+                            coords.add(coord);
                         }
 
-                        adapter.setOnItemClickListener(new PlaceSearchResultListAdapter.OnItemClickListener() {
+                        if (response.size() > 0) {
+                            map.moveCamera(CameraUpdate.fitBounds(LatLngBounds.from(coords), getResources().getDimensionPixelSize(R.dimen.map_padding)).animate(CameraAnimation.Easing));
+                        }
+
+                        adapter.setOnClickListener(new PlaceSearchResultListAdapter.OnClickListener() {
                             @Override
-                            public void onLocationButtonClick(View view, KeywordSearchResult item) {
-                                map.moveCamera(CameraUpdate.scrollTo(new LatLng(item.getLatitude(), item.getLongitude())).animate(CameraAnimation.Fly));
+                            public void onLocationButtonClick(View v, PlaceSearchResult item) {
+                                map.moveCamera(CameraUpdate.scrollAndZoomTo(new LatLng(item.getLatitude(), item.getLongitude()), 14).animate(CameraAnimation.Fly));
                             }
 
                             @Override
-                            public void onSelectButtonClick(View view, KeywordSearchResult item) {
+                            public void onSelectButtonClick(View v, PlaceSearchResult item) {
+                                Bundle bundle = new Bundle();
+                                bundle.putSerializable("place", item);
 
+                                getParentFragmentManager().setFragmentResult("placeSearch", bundle);
+                                getActivity().onBackPressed();
                             }
                         });
 

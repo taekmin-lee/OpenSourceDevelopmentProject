@@ -11,7 +11,7 @@ import com.viewpoints.aischeduler.data.model.Schedule;
 import com.viewpoints.aischeduler.data.model.ScheduleDao;
 
 @Database(entities = {Schedule.class}, version = 1, exportSchema = false)
-@TypeConverters({DateTimeConverter.class, EnumConverter.class})
+@TypeConverters({DateTimeConverter.class, VehicleTypeConverter.class, PlaceTypeConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
     public abstract ScheduleDao scheduleDao();
 

@@ -1,5 +1,7 @@
 package com.viewpoints.aischeduler.data;
 
+import android.location.Location;
+
 public class KMACoordinate {
     protected final int x, y;
 
@@ -8,10 +10,10 @@ public class KMACoordinate {
         this.y = y;
     }
 
-    public static KMACoordinate fromWGS84(WGS84Coordinate coordinate) {
+    public static KMACoordinate fromWGS84(Location location) {
         int grid = 5;
-        double xo = 210 / grid;
-        double yo = 675 / grid;
+        double xo = 210.0 / grid;
+        double yo = 675.0 / grid;
 
         double re = 6371.00877 / grid;
         double slat1 = Math.toRadians(30);
@@ -26,9 +28,9 @@ public class KMACoordinate {
         double ro = Math.tan(Math.PI * 0.25 + olat * 0.5);
         ro = re * sf / Math.pow(ro, sn);
 
-        double ra = Math.tan(Math.PI * 0.25 + Math.toRadians(coordinate.getLatitude()) * 0.5);
+        double ra = Math.tan(Math.PI * 0.25 + Math.toRadians(location.getLatitude()) * 0.5);
         ra = re * sf / Math.pow(ra, sn);
-        double theta = Math.toRadians(coordinate.getLongitude()) - olon;
+        double theta = Math.toRadians(location.getLongitude()) - olon;
         if (theta > Math.PI) theta -= 2.0 * Math.PI;
         if (theta < -Math.PI) theta += 2.0 * Math.PI;
         theta *= sn;

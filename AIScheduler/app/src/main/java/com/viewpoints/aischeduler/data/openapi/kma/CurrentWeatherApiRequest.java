@@ -1,5 +1,6 @@
 package com.viewpoints.aischeduler.data.openapi.kma;
 
+import android.location.Location;
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;
@@ -10,7 +11,6 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.viewpoints.aischeduler.data.KMACoordinate;
-import com.viewpoints.aischeduler.data.WGS84Coordinate;
 import com.viewpoints.aischeduler.data.openapi.OpenApiContext;
 
 import org.json.JSONArray;
@@ -35,8 +35,8 @@ public class CurrentWeatherApiRequest extends Request<CurrentWeather> {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public CurrentWeatherApiRequest(WGS84Coordinate coordinate, Response.Listener<CurrentWeather> listener, Response.ErrorListener errorListener) {
-        this(KMACoordinate.fromWGS84(coordinate), listener, errorListener);
+    public CurrentWeatherApiRequest(Location location, Response.Listener<CurrentWeather> listener, Response.ErrorListener errorListener) {
+        this(KMACoordinate.fromWGS84(location), listener, errorListener);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)

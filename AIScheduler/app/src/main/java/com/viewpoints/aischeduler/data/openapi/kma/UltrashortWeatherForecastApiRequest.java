@@ -1,5 +1,6 @@
 package com.viewpoints.aischeduler.data.openapi.kma;
 
+import android.location.Location;
 import android.os.Build;
 import android.util.Log;
 
@@ -11,7 +12,6 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.viewpoints.aischeduler.data.KMACoordinate;
-import com.viewpoints.aischeduler.data.WGS84Coordinate;
 import com.viewpoints.aischeduler.data.openapi.OpenApiContext;
 
 import org.json.JSONArray;
@@ -32,7 +32,7 @@ public class UltrashortWeatherForecastApiRequest extends Request<List<Ultrashort
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     protected static LocalDateTime getDateTime() {
-        LocalDateTime dateTime = LocalDateTime.now();
+        LocalDateTime dateTime = LocalDateTime.now().plusDays(1);
 
         if (dateTime.getMinute() < 45) {
             dateTime = dateTime.minusHours(1);
@@ -42,8 +42,8 @@ public class UltrashortWeatherForecastApiRequest extends Request<List<Ultrashort
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public UltrashortWeatherForecastApiRequest(WGS84Coordinate coordinate, Response.Listener<List<UltrashortWeatherForecast>> listener, Response.ErrorListener errorListener) {
-        this(KMACoordinate.fromWGS84(coordinate), listener, errorListener);
+    public UltrashortWeatherForecastApiRequest(Location location, Response.Listener<List<UltrashortWeatherForecast>> listener, Response.ErrorListener errorListener) {
+        this(KMACoordinate.fromWGS84(location), listener, errorListener);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)

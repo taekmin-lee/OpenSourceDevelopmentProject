@@ -6,12 +6,14 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
-public class TabPagerAdapter extends FragmentStateAdapter {
-    protected int scheduleId;
+import com.viewpoints.aischeduler.data.model.Schedule;
 
-    public TabPagerAdapter(Fragment fragment, int scheduleId) {
+public class TabPagerAdapter extends FragmentStateAdapter {
+    protected Schedule schedule;
+
+    public TabPagerAdapter(Fragment fragment, Schedule schedule) {
         super(fragment);
-        this.scheduleId = scheduleId;
+        this.schedule = schedule;
     }
 
     @NonNull
@@ -30,14 +32,14 @@ public class TabPagerAdapter extends FragmentStateAdapter {
                 fragment = new DirectionsTabFragment();
                 break;
             case 3:
-                fragment = new NearbyTabFragment();
+                fragment = new NearbyPlaceTabFragment();
                 break;
             default:
                 return null;
         }
 
         Bundle bundle = new Bundle();
-        bundle.putInt("id", scheduleId);
+        bundle.putSerializable("schedule", schedule);
 
         fragment.setArguments(bundle);
         return fragment;

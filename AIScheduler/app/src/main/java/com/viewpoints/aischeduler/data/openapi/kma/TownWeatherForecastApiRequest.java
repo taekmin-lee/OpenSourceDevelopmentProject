@@ -1,6 +1,8 @@
 package com.viewpoints.aischeduler.data.openapi.kma;
 
+import android.location.Location;
 import android.os.Build;
+import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
@@ -10,7 +12,6 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.viewpoints.aischeduler.data.KMACoordinate;
-import com.viewpoints.aischeduler.data.WGS84Coordinate;
 import com.viewpoints.aischeduler.data.openapi.OpenApiContext;
 
 import org.json.JSONArray;
@@ -28,18 +29,23 @@ public class TownWeatherForecastApiRequest extends Request<Collection<TownWeathe
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     protected static LocalDateTime getDateTime() {
-        LocalDateTime dateTime = LocalDateTime.now();
+        LocalDateTime dateTime = LocalDateTime.now().plusDays(1);
 
-        if ((dateTime.getHour() - 2) % 3 != 0 || dateTime.getMinute() < 10) {
-            dateTime = dateTime.minusHours((dateTime.getHour() - 2) % 3);
+        if (dateTime.getHour() % 3 != 2 || dateTime.getMinute() < 10) {
+            if (dateTime.getHour() <= 2) {
+                dateTime = dateTime.minusDays(1).withHour(23);
+            } else {
+                dateTime = dateTime.minusHours((dateTime.getHour() - 2) % 3);
+            }
         }
 
+        Log.d("town weather", "getting data of " + dateTime);
         return LocalDateTime.of(dateTime.getYear(), dateTime.getMonth(), dateTime.getDayOfMonth(), dateTime.getHour(), 0);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public TownWeatherForecastApiRequest(WGS84Coordinate coordinate, Response.Listener<Collection<TownWeatherForecast>> listener, Response.ErrorListener errorListener) {
-        this(KMACoordinate.fromWGS84(coordinate), listener, errorListener);
+    public TownWeatherForecastApiRequest(Location location, Response.Listener<Collection<TownWeatherForecast>> listener, Response.ErrorListener errorListener) {
+        this(KMACoordinate.fromWGS84(location), listener, errorListener);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)

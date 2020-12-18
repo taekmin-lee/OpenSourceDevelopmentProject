@@ -44,14 +44,15 @@
             android:layout_marginLeft="24dp"
             android:background="@android:color/transparent"
             android:hint="@string/name"
+            android:text=""
             android:textAppearance="?attr/textAppearanceBody1" />
 
     </LinearLayout>
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:background="@android:color/darker_gray" />
+        android:layout_height="1dp"
+        android:background="#1F000000" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -148,8 +149,8 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:background="@android:color/darker_gray" />
+        android:layout_height="1dp"
+        android:background="#1F000000" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -165,23 +166,46 @@
             app:srcCompat="@drawable/ic_round_location"
             tools:ignore="VectorDrawableCompat" />
 
-        <TextView
-            android:id="@+id/place_text"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginStart="24dp"
-            android:layout_marginLeft="24dp"
-            android:background="@android:color/transparent"
-            android:gravity="center_vertical"
-            android:text="@string/place"
-            android:textAppearance="?attr/textAppearanceBody1" />
+            android:layout_marginLeft="24dp">
+
+            <TextView
+                android:id="@+id/place_text"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:gravity="center_vertical"
+                android:text="@string/place"
+                android:textAppearance="?attr/textAppearanceBody1"
+                android:textColor="#99000000"
+                app:layout_constraintEnd_toStartOf="@id/remove_place_button"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton
+                android:id="@+id/remove_place_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_round_remove_circle"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/place_text"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </LinearLayout>
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:background="@android:color/darker_gray" />
+        android:layout_height="1dp"
+        android:background="#1F000000" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -232,8 +256,8 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:background="@android:color/darker_gray" />
+        android:layout_height="1dp"
+        android:background="#1F000000" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -258,6 +282,7 @@
             android:layout_marginLeft="24dp"
             android:background="@android:color/transparent"
             android:hint="@string/memo"
+            android:text=""
             android:textAppearance="?attr/textAppearanceBody1" />
 
     </LinearLayout>

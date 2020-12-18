@@ -4,14 +4,14 @@ import androidx.room.TypeConverter;
 
 import com.viewpoints.aischeduler.data.model.VehicleType;
 
-public class EnumConverter {
+public class VehicleTypeConverter {
     @TypeConverter
-    public static Integer fromEnum(VehicleType value) {
+    public static Integer fromVehicleType(VehicleType value) {
         return value == null ? null : value.ordinal();
     }
 
     @TypeConverter
-    public static VehicleType toEnum(Integer value) {
+    public static VehicleType toVehicleType(Integer value) {
         if (value != null) {
             for (VehicleType t : VehicleType.values()) {
                 if (t.ordinal() == value) {
