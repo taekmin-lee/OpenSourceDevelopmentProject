@@ -32,6 +32,8 @@ import com.viewpoints.aischeduler.data.AppDatabase;
 import com.viewpoints.aischeduler.data.model.PlaceType;
 import com.viewpoints.aischeduler.data.model.Schedule;
 import com.viewpoints.aischeduler.data.model.VehicleType;
+import com.viewpoints.aischeduler.data.openapi.OpenApiContext;
+import com.viewpoints.aischeduler.data.openapi.kakao.PlaceDetailsApiRequest;
 import com.viewpoints.aischeduler.data.openapi.kakao.PlaceSearchResult;
 
 import java.time.Instant;
@@ -60,6 +62,8 @@ public class ScheduleFormFragment extends Fragment {
     protected String placeName;
     protected Integer placeId;
     protected PlaceType placeType;
+    protected Integer placeCategoryId;
+    protected String placeCategoryName;
     protected Double placeLongitude, placeLatitude;
 
     @Override
@@ -142,6 +146,12 @@ public class ScheduleFormFragment extends Fragment {
             placeText.setText(place.getName());
             placeText.setTextColor(0xFF000000);
             removePlaceButton.setVisibility(View.VISIBLE);
+
+            OpenApiContext.getInstance(getContext()).getRequestQueue().add(new PlaceDetailsApiRequest(place.getId(), response -> {
+                placeCategoryId = response.getCategoryId();
+                placeCategoryName = response.getCategoryName();
+            }, error -> {
+            }));
         });
 
         placeText = view.findViewById(R.id.place_text);
@@ -156,6 +166,8 @@ public class ScheduleFormFragment extends Fragment {
             placeName = null;
             placeId = null;
             placeType = null;
+            placeCategoryId = null;
+            placeCategoryName = null;
             placeLongitude = placeLatitude = null;
 
             placeText.setText("장소");
@@ -211,6 +223,8 @@ public class ScheduleFormFragment extends Fragment {
                 if (placeId != null) {
                     placeName = schedule.getPlaceName();
                     placeType = schedule.getPlaceType();
+                    placeCategoryId = schedule.getPlaceCategoryId();
+                    placeCategoryName = schedule.getPlaceCategoryName();
                     placeLongitude = schedule.getPlaceLongitude();
                     placeLatitude = schedule.getPlaceLatitude();
 
@@ -263,6 +277,8 @@ public class ScheduleFormFragment extends Fragment {
             schedule.setPlaceName(placeName);
             schedule.setPlaceId(placeId);
             schedule.setPlaceType(placeType);
+            schedule.setPlaceCategoryId(placeCategoryId);
+            schedule.setPlaceCategoryName(placeCategoryName);
             schedule.setPlaceLongitude(placeLongitude);
             schedule.setPlaceLatitude(placeLatitude);
 

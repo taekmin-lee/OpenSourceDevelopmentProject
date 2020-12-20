@@ -27,14 +27,11 @@ public class UserLocationContext {
                 if (location != null) {
                     this.location = location;
                 }
+
+                manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, l -> this.location = l);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
-            manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, l ->
-            {
-                location = l;
-            });
         }
     }
 
@@ -46,6 +43,12 @@ public class UserLocationContext {
     }
 
     public Location getLocation() {
+        if (location == null) {
+            location = new Location("dummy");
+            location.setLongitude(127.454444033872);
+            location.setLatitude(36.625621535916);
+        }
+
         return location;
     }
 }

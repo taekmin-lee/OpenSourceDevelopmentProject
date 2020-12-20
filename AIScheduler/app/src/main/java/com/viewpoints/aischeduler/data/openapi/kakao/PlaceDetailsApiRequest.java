@@ -39,6 +39,7 @@ public class PlaceDetailsApiRequest extends Request<PlaceDetailsResult> {
                 result.setPhotoUrl(basicInfo.getString("mainphotourl"));
             }
 
+            result.setCategoryId(Integer.parseInt(basicInfo.getString("cateid")));
             result.setCategoryName(basicInfo.getString("catename"));
 
             if (basicInfo.has("openHour")) {

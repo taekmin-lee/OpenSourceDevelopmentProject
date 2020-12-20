@@ -84,6 +84,7 @@ public class CalendarFragment extends Fragment {
         recyclerView = view.findViewById(R.id.recycler_view);
 
         dateText = view.findViewById(R.id.date_text);
+        dateText.setText(calendarView.getCurYear() + "년 " + calendarView.getCurMonth() + "월 " + calendarView.getCurDay() + "일");
 
         createButton = view.findViewById(R.id.create_button);
         createButton.setOnClickListener(v -> {
@@ -114,7 +115,7 @@ public class CalendarFragment extends Fragment {
             int month = calendarView.getSelectedCalendar().getMonth();
             int day = calendarView.getSelectedCalendar().getDay();
 
-            Log.d("test", day +"일 일정");
+            Log.d("test", day + "일 일정");
 
             for (Schedule schedule : schedules) {
                 for (LocalDate d = schedule.getStart().toLocalDate(); d.compareTo(schedule.getEnd().toLocalDate()) <= 0; d = d.plusDays(1)) {

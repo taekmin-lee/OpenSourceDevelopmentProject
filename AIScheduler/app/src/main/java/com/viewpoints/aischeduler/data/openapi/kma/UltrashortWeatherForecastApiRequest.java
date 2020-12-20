@@ -32,7 +32,7 @@ public class UltrashortWeatherForecastApiRequest extends Request<List<Ultrashort
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     protected static LocalDateTime getDateTime() {
-        LocalDateTime dateTime = LocalDateTime.now().plusDays(1);
+        LocalDateTime dateTime = LocalDateTime.now();
 
         if (dateTime.getMinute() < 45) {
             dateTime = dateTime.minusHours(1);

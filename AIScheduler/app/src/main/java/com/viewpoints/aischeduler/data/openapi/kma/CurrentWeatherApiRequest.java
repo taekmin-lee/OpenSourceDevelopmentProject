@@ -49,7 +49,7 @@ public class CurrentWeatherApiRequest extends Request<CurrentWeather> {
         super(Method.GET,
                 String.format("http://apis.data.go.kr/1360000/VilageFcstInfoService/getUltraSrtNcst?serviceKey=%s&dataType=JSON&base_date=%04d%02d%02d&base_time=%02d%02d&nx=%d&ny=%d",
                         OpenApiContext.PUBLIC_DATA_PORTAL_SERVICE_KEY,
-                        dateTime.getYear(), dateTime.getMonth(), dateTime.getDayOfMonth(), dateTime.getHour(), dateTime.getMinute(),
+                        dateTime.getYear(), dateTime.getMonthValue(), dateTime.getDayOfMonth(), dateTime.getHour(), dateTime.getMinute(),
                         coordinate.getX(), coordinate.getY()
                 ), errorListener);
         this.listener = listener;

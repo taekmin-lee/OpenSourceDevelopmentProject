@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.chip.Chip;
 import com.google.maps.DirectionsApi;
+import com.google.maps.DirectionsApiRequest;
 import com.google.maps.GeoApiContext;
 import com.google.maps.PendingResult;
 import com.google.maps.model.DirectionsResult;
@@ -23,6 +24,8 @@ import com.viewpoints.aischeduler.R;
 import com.viewpoints.aischeduler.data.UserLocationContext;
 import com.viewpoints.aischeduler.data.model.Schedule;
 import com.viewpoints.aischeduler.data.openapi.OpenApiContext;
+
+import java.time.ZoneId;
 
 public class DirectionsTabFragment extends Fragment {
     protected Schedule schedule;
@@ -72,21 +75,20 @@ public class DirectionsTabFragment extends Fragment {
         return view;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     private void loadDirections() {
         GeoApiContext context = OpenApiContext.getInstance(getContext()).getGeoApiContext();
 
         Location location = UserLocationContext.getInstance(getActivity()).getLocation();
-        String origin, destination;
+        DirectionsApiRequest request;
 
         if (directions1Chip.isChecked()) {
-            origin = location.getLatitude() + "," + location.getLongitude();
-            destination = schedule.getPlaceLatitude() + "," + schedule.getPlaceLongitude();
+            request = DirectionsApi.getDirections(context, location.getLatitude() + "," + location.getLongitude(), schedule.getPlaceLatitude() + "," + schedule.getPlaceLongitude()).arrivalTime(schedule.getStart().atZone(ZoneId.systemDefault()).toInstant());
         } else {
-            origin = schedule.getPlaceLatitude() + "," + schedule.getPlaceLongitude();
-            destination = location.getLatitude() + "," + location.getLongitude();
+            request = DirectionsApi.getDirections(context, schedule.getPlaceLatitude() + "," + schedule.getPlaceLongitude(), location.getLatitude() + "," + location.getLongitude()).departureTime(schedule.getEnd().atZone(ZoneId.systemDefault()).toInstant());
         }
 
-        DirectionsApi.getDirections(context, origin, destination).mode(TravelMode.TRANSIT).alternatives(true).language("ko").setCallback(new PendingResult.Callback<DirectionsResult>() {
+        request.mode(TravelMode.TRANSIT).alternatives(true).language("ko").setCallback(new PendingResult.Callback<DirectionsResult>() {
             @Override
             public void onResult(DirectionsResult result) {
                 adapter = new RouteListAdapter(result.routes);

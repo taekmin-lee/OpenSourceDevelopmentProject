@@ -3,6 +3,7 @@ package com.viewpoints.aischeduler;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,7 +14,10 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.kakao.sdk.common.KakaoSdk;
+import com.kakao.sdk.common.util.Utility;
 import com.viewpoints.aischeduler.data.UserLocationContext;
+import com.viewpoints.aischeduler.data.openapi.OpenApiContext;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -47,6 +51,10 @@ public class MainActivity extends AppCompatActivity {
 
 //        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(bottomNavigationView, controller);
+
+        KakaoSdk.init(this, OpenApiContext.KAKAO_NAVTIVE_APP_KEY);
+
+        Log.d("key", Utility.INSTANCE.getKeyHash(this));
     }
 
 }

@@ -1,6 +1,8 @@
 package com.viewpoints.aischeduler.ui.schedule;
 
+import android.content.Intent;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,6 +20,7 @@ import com.viewpoints.aischeduler.data.model.Schedule;
 import com.viewpoints.aischeduler.data.model.VehicleType;
 import com.viewpoints.aischeduler.data.openapi.OpenApiContext;
 import com.viewpoints.aischeduler.data.openapi.kakao.CategorySearchApiRequest;
+import com.viewpoints.aischeduler.data.openapi.kakao.PlaceSearchResult;
 
 public class NearbyPlaceTabFragment extends Fragment {
     protected Schedule schedule;
@@ -140,6 +143,19 @@ public class NearbyPlaceTabFragment extends Fragment {
         OpenApiContext.getInstance(getContext()).getRequestQueue().add(new CategorySearchApiRequest(placeType, scheduleLocation, 2000,
                 response -> {
                     adapter = new NearbyPlaceListAdapter(response);
+                    adapter.setOnClickListener(new NearbyPlaceListAdapter.OnClickListener() {
+                        @Override
+                        public void onPhoneClickButtonClick(View view, PlaceSearchResult item) {
+
+                        }
+
+                        @Override
+                        public void onItemClickButtonClick(View view, PlaceSearchResult item) {
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("kakaomap://place?id=" + item.getId()));
+                            startActivity(intent);
+                        }
+                    });
+
                     recyclerView.setAdapter(adapter);
 
                     Log.d("NearbyPlace", "success1");

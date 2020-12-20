@@ -1,6 +1,7 @@
 package com.viewpoints.aischeduler.data.model;
 
 public enum PlaceType {
+    NONE("", "기타"),
     MART("MT1", "대형마트"),
     CONVENIENCE_STORE("CS2", "편의점"),
     KINDERGARTEN("PS3", "어린이집, 유치원"),
@@ -34,7 +35,7 @@ public enum PlaceType {
             }
         }
 
-        return null;
+        return NONE;
     }
 
     public String getCode() {

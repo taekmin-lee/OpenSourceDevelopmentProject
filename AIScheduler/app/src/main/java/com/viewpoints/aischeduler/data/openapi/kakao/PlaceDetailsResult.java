@@ -5,6 +5,7 @@ import java.util.Map;
 
 public class PlaceDetailsResult {
     protected String photoUrl;
+    protected Integer categoryId;
     protected String categoryName;
     protected Map<String, String> menus = new HashMap<>();
     protected Map<String, String> openHours = new HashMap<>();
@@ -15,6 +16,14 @@ public class PlaceDetailsResult {
 
     public void setPhotoUrl(String photoUrl) {
         this.photoUrl = photoUrl;
+    }
+
+    public Integer getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Integer categoryId) {
+        this.categoryId = categoryId;
     }
 
     public String getCategoryName() {

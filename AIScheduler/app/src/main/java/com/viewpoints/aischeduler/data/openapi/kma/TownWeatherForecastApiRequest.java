@@ -29,7 +29,7 @@ public class TownWeatherForecastApiRequest extends Request<Collection<TownWeathe
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     protected static LocalDateTime getDateTime() {
-        LocalDateTime dateTime = LocalDateTime.now().plusDays(1);
+        LocalDateTime dateTime = LocalDateTime.now();
 
         if (dateTime.getHour() % 3 != 2 || dateTime.getMinute() < 10) {
             if (dateTime.getHour() <= 2) {

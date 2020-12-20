@@ -83,7 +83,7 @@ public class NearbyPlaceListAdapter extends RecyclerView.Adapter<NearbyPlaceList
                                     openHours += ", ";
                                 }
 
-                                openHours += String.format(time.getKey() + ": " + time.getValue());
+                                openHours += String.format(time.getKey() + " " + time.getValue());
                             }
 
                             openHourText.setText(openHours);

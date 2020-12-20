@@ -17,6 +17,9 @@ public interface ScheduleDao {
     @Query("SELECT * FROM 'schedule' WHERE rowid = :id")
     Schedule get(int id);
 
+    @Query("SELECT * FROM 'schedule' GROUP BY 'place_category_id' HAVING COUNT(*) = (SELECT MAX(cnt) FROM( SELECT COUNT(*) as cnt FROM 'schedule' GROUP BY 'place_category_id')) AND 'place_category_id' NOT NULL")
+    Schedule getMostFrequentPlace();
+
     @Insert
     void insert(Schedule schedule);
 
